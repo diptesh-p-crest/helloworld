@@ -1,0 +1,13 @@
+{
+    "name": "spectersolutions/notificationpack",
+    "description": "Notification Package",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Diptesh Patel",
+            "email": "dip2930@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
