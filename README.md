@@ -28,7 +28,7 @@
 
 Manual Steps:
 ------------
-1) To activate General Notification ICON, Copy following Code to Smarty\templates\Settings.tpl in Communication section after the last <li> tag.
+1) To activate General Notification ICON, Copy following Code to Smarty\templates\Settings.tpl in Communication section after the last &lt;li&gt; tag.
 
 {if file_exists('Smarty/templates/NotificationTemplates/generalNotification.tpl')}
     {include file='NotificationTemplates/generalNotification.tpl'}
