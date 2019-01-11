@@ -1,7 +1,9 @@
 # General Notification
 
 -> Make sure composer installed on your computer
+
 -> Create one file composer.json in your root folder
+
 -> Add following code JSON in composer.json file
 
 {
@@ -17,8 +19,11 @@
 }
 
 -> In Command prompt go to the Project directory
+
 -> If its first time then run ==> composer install
+
 -> Late run ==> composer update
+
 -> Finally run transferfolders.bat (it will copy down require files to appropriate folders)
 
 Manual Steps:
