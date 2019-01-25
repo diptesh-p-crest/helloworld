@@ -33,3 +33,7 @@ Manual Steps:
 {if file_exists('Smarty/templates/NotificationTemplates/generalNotification.tpl')}
     {include file='NotificationTemplates/generalNotification.tpl'}
 {/if}
+
+2) Using <b>PHINX</b> create new SQL file and copy down migrate <b>UP</b> and <b>Down</b> functions from notification_sql.php SQL to newly created SQL file. Finally Migrate the SQL.
+
+3)
