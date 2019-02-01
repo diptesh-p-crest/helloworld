@@ -11,10 +11,5 @@
     "minimum-stability": "dev",
     "require": {
         "twilio/sdk" : "4.*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Twilio\\": "Twilio/"
-        }
     }
 }
