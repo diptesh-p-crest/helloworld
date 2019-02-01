@@ -36,26 +36,54 @@ class Lbm1493Dip extends AbstractMigration
     public function up()    
     {
         $this->execute("CREATE TABLE IF NOT EXISTS `notifications` (
-                        `notificationid` INT(11) NOT NULL AUTO_INCREMENT,
-                        `notificationname` VARCHAR(200) NULL DEFAULT NULL,
-                        `trigger_type` VARCHAR(50) NULL DEFAULT NULL,
-                        `trigger_on` VARCHAR(50) NULL DEFAULT NULL,
-                        `trigger_for` VARCHAR(50) NULL DEFAULT NULL,
-                        `trigger_when_value` INT(11) NULL DEFAULT NULL,
-                        `trigger_when_option` VARCHAR(50) NULL DEFAULT NULL,
-                        `trigger_date` DATETIME NULL DEFAULT NULL,
-                        `product_customer` ENUM('P','C') NULL DEFAULT NULL,
-                        `message` TEXT NULL,
-                        `selected_products` TEXT NULL,
-                        `selected_customers` TEXT NULL,
-                        `createdtime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-                        `modifiedtime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-                        `deleted` ENUM('0','1') NULL DEFAULT '0',
-                        PRIMARY KEY (`notificationid`)
+                        	`notificationid` INT(11) NOT NULL AUTO_INCREMENT,
+                            `notificationname` VARCHAR(200) NULL DEFAULT NULL,
+                            `trigger_type` VARCHAR(50) NULL DEFAULT NULL,
+                            `trigger_on` VARCHAR(50) NULL DEFAULT NULL,
+                            `trigger_for` VARCHAR(50) NULL DEFAULT NULL,
+                            `trigger_when_value` INT(11) NULL DEFAULT NULL,
+                            `trigger_when_option` VARCHAR(50) NULL DEFAULT NULL,
+                            `trigger_date` DATETIME NULL DEFAULT NULL,
+                            `product_customer` ENUM('P','C') NULL DEFAULT NULL,
+                            `message` TEXT NULL,
+                            `selected_products` TEXT NULL,
+                            `selected_customers` TEXT NULL,
+                            `start_date` DATE NULL DEFAULT NULL,
+                            `end_date` DATE NULL DEFAULT NULL,
+                            `createdtime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                            `modifiedtime` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                            `deleted` ENUM('0','1') NULL DEFAULT '0',
+                            PRIMARY KEY (`notificationid`)
                     )
                     COLLATE='latin1_swedish_ci'
                     ENGINE=InnoDB
                     AUTO_INCREMENT=1;
+                    
+                    CREATE TABLE IF NOT EXISTS `notification_sms_config` (
+                            `smsconfigid` INT(11) NOT NULL AUTO_INCREMENT,
+                            `accountid` VARCHAR(100) NOT NULL DEFAULT '0',
+                            `key` VARCHAR(100) NOT NULL DEFAULT '0',
+                            `phonenumber` VARCHAR(100) NOT NULL DEFAULT '0',
+                            `active` ENUM('Y','N') NOT NULL DEFAULT 'N',
+                            `modifiedtime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            PRIMARY KEY (`smsconfigid`)
+                        )
+                    COLLATE='latin1_swedish_ci'
+                    ENGINE=InnoDB;   
+
+                    CREATE TABLE IF NOT EXISTS `notification_list` (
+                        `listid` INT(11) NOT NULL AUTO_INCREMENT,
+                        `notificationid` INT(11) NOT NULL,
+                        `date_of_trigger` DATETIME NOT NULL,
+                        `customer_name` VARCHAR(100) NOT NULL,
+                        `customer_number` VARCHAR(100) NOT NULL,
+                        `related_productnumber` VARCHAR(100) NOT NULL,
+                        `related_product_id` INT(11) NOT NULL,
+                        `finished` ENUM('Y','N') NOT NULL,
+                        `finish_date_time` DATETIME NOT NULL,
+                        PRIMARY KEY (`listid`)
+                    )
+                    ENGINE=InnoDB;                        
                     ");
     }
 
@@ -64,6 +92,9 @@ class Lbm1493Dip extends AbstractMigration
      */
     public function down()
     {
-        $this->execute("DROP TABLE IF EXISTS notifications");
+        $this->execute("DROP TABLE IF EXISTS `notifications`;
+                        DROP TABLE IF EXISTS `notification_sms_config`;
+                        DROP TABLE IF EXISTS `notification_list`;
+                        ");
     }     
 }

@@ -36,4 +36,11 @@ Manual Steps:
 
 2) Using <b>PHINX</b> create new SQL file and copy down migrate <b>UP</b> and <b>Down</b> functions from notification_sql.php SQL to newly created SQL file. Finally Migrate the SQL.
 
-3)
+3) Need to remove "Iframe" value from "jscalendar\calendar.js" file on line 1487.
+
+4) Add this line on the top of utils.php "require_once 'include/NotificationUtils.php';"
+
+5) In "modules\SalesOrder\saveFinalizeSOFunctions.php" search for this loop
+    for ($i = 1; $i <= $soparams['totalProductCount']; $i++) 
+    
+    And call the functions <b>check_and_save_to_notification_list($dlAccountId, $soparams["hdnProductId$i"]);</b>
