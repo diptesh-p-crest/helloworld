@@ -8,8 +8,5 @@
             "email": "dip2930@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
-    "require": {
-        "twilio/sdk" : "4.*"
-    }
+    "minimum-stability": "dev"
 }
