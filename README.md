@@ -8,7 +8,8 @@
 
 {
   "require": {
-    "spectersolutions/notificationpack":"dev-master@dev"
+    "spectersolutions/notificationpack":"dev-master@dev",
+    "twilio/sdk" : "5.*"
   },
   "repositories": [
     {

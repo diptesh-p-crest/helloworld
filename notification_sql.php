@@ -81,6 +81,7 @@ class Lbm1493Dip extends AbstractMigration
                         `related_product_id` INT(11) NOT NULL,
                         `finished` ENUM('Y','N') NOT NULL,
                         `finish_date_time` DATETIME NOT NULL,
+                        `response` TEXT NOT NULL,
                         PRIMARY KEY (`listid`)
                     )
                     ENGINE=InnoDB;                        
