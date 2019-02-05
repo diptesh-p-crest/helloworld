@@ -45,3 +45,12 @@ Manual Steps:
     for ($i = 1; $i <= $soparams['totalProductCount']; $i++) 
     
     And call the functions <b>check_and_save_to_notification_list($dlAccountId, $soparams["hdnProductId$i"]);</b>
+    
+6) In include/utils/commonfunctions.php -- need to make change to send HTML Emails
+
+like this
+
+$mail->MsgHTML(html_entity_decode($message));
+$mail->IsHTML(true); // send as HTML
+
+IsHTML will call later the MsgHTML and need to use html_entity_decode
