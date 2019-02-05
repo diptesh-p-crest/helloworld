@@ -23,9 +23,9 @@
 
 -> If its first time then run ==> composer install
 
--> Late run ==> composer update
+-> Later run ==> composer update
 
--> Finally run transferfolders.bat (it will copy down require files to appropriate folders)
+-> Finally copy  \vendor\spectersolutions\notificationpack\transferfolders.bat on root and double click (it will copy down require files to appropriate folders)
 
 Manual Steps:
 ------------
