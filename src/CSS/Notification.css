@@ -1,0 +1,114 @@
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+ul i.glyphicon-move
+{
+    cursor: pointer;
+}
+.nav-tabs {
+    border-bottom: 1px solid #ddd;
+}
+
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+ul {
+    list-style: none;
+    line-height: 20px;
+    padding-left: 5px;
+    margin-left: 5px;
+    font-weight: normal;
+}
+
+.panel-warning > .panel-heading {
+    color: #FFFFFF;
+    background-color: #eeeeee;
+    border-color: #eeeeee;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: 1px solid #ddd;
+        border-bottom-color: rgb(221, 221, 221);
+    border-bottom-color: transparent;
+}
+
+.nav-tabs > li > a {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+}
+
+
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+
+a {
+    text-decoration: none;
+    color: #470000;
+    font-weight: bold;
+}
+
+.panel-warning > .panel-heading {
+    color: #FFFFFF;
+    background-color: #383838;
+    border-color: #383838;
+}
+
+.panel-heading {
+    padding: 10px 0px;
+    border-bottom: 1px solid transparent;
+    border-bottom-color: transparent;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #e5e5e6;
+    border-color: #383838;
+}
+
+.panel-warning {
+    border-color: #bba225;
+}
+
+.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.nav-tabs > li {
+    float: left;
+    margin-bottom: -1px;
+}
+
+.nav > li {
+    position: relative;
+    display: block;
+}
+
+ul li {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+.row {
+    margin-bottom: 22px;
+}

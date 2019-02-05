@@ -52,4 +52,4 @@ if ($temprow != null)
 $log->info("Exiting Email Templates List View");
 
 $smarty->assign("NOTIFICATION", $return_data);
-$smarty->display("NotificationTemplates/Notification.tpl");
+$smarty->display("NotificationTemplates/CreateNotification.tpl");
