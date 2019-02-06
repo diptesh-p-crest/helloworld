@@ -152,32 +152,43 @@ function replace_mapping_info($messageBody, $Prod_Cust_info)
     return $messageBody;
 }
 
-function check_and_save_to_notification_list($customerID, $productId)
+function check_and_save_to_notification_list($customerID, $productId, $trigger_on_value, $referenceValue)
 {
     global $adb;
 
     set_local_TimeZone();
-    $currentDateTime = date("Y-m-d H:i:s");    
-    
-    $resProductNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_products LIKE '%\"$productId\"%' AND deleted = '0'");    
-    $resCustomerNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_customers LIKE '%\"$customerID\"%' AND deleted = '0'");
-    
-    $CustomerInfo = getAccountFullDetails($customerID);
-    $ProductInfo = getProductInformation($productId);
+    $currentDateTime = date("Y-m-d H:i:s");
+
+    if($referenceValue != "")
+    {
+        $referenceValue = "Reference : ".$referenceValue;
+    }
     
     $finalNotificationList = [];
-    if($adb->num_rows($resProductNotification) > 0)
+    if($productId != "")
     {
-        while($rowNotification = $adb->fetchByAssoc($resProductNotification))
-        {   
-            $finalNotificationList[] = $rowNotification;
+        $resProductNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_products LIKE '%\"$productId\"%' AND deleted = '0' AND trigger_on = '$trigger_on_value'");
+        $ProductInfo = getProductInformation($productId);      
+        
+        if($adb->num_rows($resProductNotification) > 0)
+        {
+            while($rowNotification = $adb->fetchByAssoc($resProductNotification))
+            {   
+                $finalNotificationList[] = $rowNotification;
+            }
         }
     }
-    if($adb->num_rows($resCustomerNotification) > 0)
+    if($customerID != "")
     {
-        while($rowNotification = $adb->fetchByAssoc($resCustomerNotification))
-        {   
-            $finalNotificationList[] = $rowNotification;
+        $resCustomerNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_customers LIKE '%\"$customerID\"%' AND deleted = '0' AND trigger_on = '$trigger_on_value'");
+        $CustomerInfo = getAccountFullDetails($customerID);
+        
+        if($adb->num_rows($resCustomerNotification) > 0)
+        {
+            while($rowNotification = $adb->fetchByAssoc($resCustomerNotification))
+            {   
+                $finalNotificationList[] = $rowNotification;
+            }
         }
     }
     
@@ -191,16 +202,16 @@ function check_and_save_to_notification_list($customerID, $productId)
             $trigger_date = date("Y-m-d H:i:s",strtotime('+'.$rowNotification['trigger_when_value'].' '.$rowNotification['trigger_when_option'], strtotime($currentDateTime)));
             
             $adb->pquery("INSERT INTO `notification_list` 
-                    (`notificationid`, `date_of_trigger`, `customer_name`, `customer_number`, `related_productnumber`, `related_product_id`,`finished`, `finish_date_time`, `response`) 
-                    VALUES (?,?,?,?,?,?,?,?,?)", 
-                    [$rowNotification['notificationid'], $trigger_date, $CustomerInfo['accountname'], $customerID, $ProductInfo['cf_782'], $productId, "N", '0000-00-00 00:00:00', $response]
+                    (`notificationid`, `date_of_trigger`, `customer_name`, `customer_number`, `related_productnumber`, `related_product_id`,`finished`, `finish_date_time`, `response`, `reference_trigger_on_value`) 
+                    VALUES (?,?,?,?,?,?,?,?,?,?)", 
+                    [$rowNotification['notificationid'], $trigger_date, $CustomerInfo['accountname'], $customerID, $ProductInfo['cf_782'], $productId, "N", '0000-00-00 00:00:00', $response, $referenceValue]
                     );
         } 
                         
     }  
 }
 
-function send_sms_to_customer($notificationID)
+function send_sms_to_customer($notificationID, $referenceValue="")
 {
     global $adb;
 
@@ -219,12 +230,19 @@ function send_sms_to_customer($notificationID)
             $CustomerInfo = getAccountFullDetails($customerID);
             
             $messageBody = replace_mapping_info($notificationDetails['message'], $CustomerInfo);
+            
             if($notificationDetails['trigger_type'] == 'sms' && $CustomerInfo['phone'] != '')
             {
+                if($referenceValue != "")
+                    $messageBody = $referenceValue." ".$messageBody;
+                
                 $response = sendSMS($CustomerInfo['phone'], $messageBody);
             }
             elseif($notificationDetails['trigger_type'] == 'email' && $CustomerInfo['email1'] != '')
             {
+                if($referenceValue != "")
+                    $messageBody = $referenceValue."<br/><br/>".$messageBody;
+                
                 $response = send_email($CustomerInfo['email1'], $notificationDetails['notificationname'], $messageBody);
             }           
             

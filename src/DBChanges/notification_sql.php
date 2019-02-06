@@ -82,6 +82,7 @@ class Lbm1493Dip extends AbstractMigration
                         `finished` ENUM('Y','N') NOT NULL,
                         `finish_date_time` DATETIME NOT NULL,
                         `response` TEXT NOT NULL,
+                        `reference_trigger_on_value` VARCHAR(200) NULL DEFAULT NULL,
                         PRIMARY KEY (`listid`)
                     )
                     ENGINE=InnoDB;                        

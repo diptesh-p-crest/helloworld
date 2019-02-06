@@ -40,7 +40,7 @@ if($adb->num_rows($resTodayNotification) > 0)
         
         if($curretDateHour == $TriggerDate)
         {
-            send_sms_to_customer($rowNotification['notificationid']);
+            send_sms_to_customer($rowNotification['notificationid'], $rowNotification['reference_trigger_on_value']);
         }
     }
 }

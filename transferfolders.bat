@@ -10,7 +10,7 @@ xcopy /I vendor\spectersolutions\notificationpack\src\Notification modules\Setti
 ECHO. ***********************************
 ECHO. ** Tranfer TEMPLATE Files **
 ECHO. *******************************
-xcopy /I vendor\spectersolutions\notificationpack\src\NotificationTemplates Smarty\templates
+xcopy /I vendor\spectersolutions\notificationpack\src\NotificationTemplates Smarty\templates\NotificationTemplates
 ECHO. ***********************************
 ECHO. ** Tranfer IMAGES Files **
 ECHO. *******************************
