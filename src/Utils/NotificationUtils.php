@@ -103,7 +103,7 @@ function getAccountFields()
     global $adb;
     $accountFieldList = [];
     
-    $res_acc = $adb->pquery("SELECT fieldname, fieldlabel FROM vtiger_field WHERE `tablename` LIKE '%vtiger_account%' AND displaytype IN ('1','2','3') ORDER BY fieldlabel", []);
+    $res_acc = $adb->pquery("SELECT fieldname, fieldlabel FROM vtiger_field WHERE `tablename` IN ('vtiger_account', 'vtiger_accountscf', 'vtiger_accountbillads', 'vtiger_accountshipads') AND displaytype IN ('1','2','3') ORDER BY fieldlabel", []);
     if($adb->num_rows($res_acc))
     {
         while($rowAcc = $adb->fetchByAssoc($res_acc))
@@ -167,7 +167,7 @@ function check_and_save_to_notification_list($customerID, $productId, $trigger_o
     $finalNotificationList = [];
     if($productId != "")
     {
-        $resProductNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_products LIKE '%\"$productId\"%' AND deleted = '0' AND trigger_on = '$trigger_on_value'");
+        $resProductNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_products LIKE '%\"$productId\"%' AND deleted = '0' AND trigger_on = '$trigger_on_value' AND trigger_when_option <> 'immediately'");
         $ProductInfo = getProductInformation($productId);      
         
         if($adb->num_rows($resProductNotification) > 0)
@@ -180,7 +180,7 @@ function check_and_save_to_notification_list($customerID, $productId, $trigger_o
     }
     if($customerID != "")
     {
-        $resCustomerNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_customers LIKE '%\"$customerID\"%' AND deleted = '0' AND trigger_on = '$trigger_on_value'");
+        $resCustomerNotification = $adb->pquery("SELECT * FROM notifications WHERE selected_customers LIKE '%\"$customerID\"%' AND deleted = '0' AND trigger_on = '$trigger_on_value' AND trigger_when_option <> 'immediately'");
         $CustomerInfo = getAccountFullDetails($customerID);
         
         if($adb->num_rows($resCustomerNotification) > 0)
@@ -196,7 +196,8 @@ function check_and_save_to_notification_list($customerID, $productId, $trigger_o
     {
         $messageBody = replace_mapping_info($rowNotification['message'], $CustomerInfo);
         $messageBody = replace_mapping_info($messageBody, $ProductInfo);
-            
+        $productNumber = (!isset($ProductInfo['cf_782']) || empty($ProductInfo['cf_782'])) ? "" : $ProductInfo['cf_782'];
+          
         if($rowNotification['trigger_when_option'] != 'immediately')
         {
             $trigger_date = date("Y-m-d H:i:s",strtotime('+'.$rowNotification['trigger_when_value'].' '.$rowNotification['trigger_when_option'], strtotime($currentDateTime)));
@@ -204,14 +205,14 @@ function check_and_save_to_notification_list($customerID, $productId, $trigger_o
             $adb->pquery("INSERT INTO `notification_list` 
                     (`notificationid`, `date_of_trigger`, `customer_name`, `customer_number`, `related_productnumber`, `related_product_id`,`finished`, `finish_date_time`, `response`, `reference_trigger_on_value`) 
                     VALUES (?,?,?,?,?,?,?,?,?,?)", 
-                    [$rowNotification['notificationid'], $trigger_date, $CustomerInfo['accountname'], $customerID, $ProductInfo['cf_782'], $productId, "N", '0000-00-00 00:00:00', $response, $referenceValue]
+                    [$rowNotification['notificationid'], $trigger_date, $CustomerInfo['accountname'], $customerID, $productNumber, $productId, "N", '0000-00-00 00:00:00', "", $referenceValue]
                     );
-        } 
-                        
-    }  
+        }               
+    }
+    
 }
 
-function send_sms_to_customer($notificationID, $referenceValue="")
+function send_sms_to_customer($notificationID, $referenceValue="", $updateNotificationList=0)
 {
     global $adb;
 
@@ -228,31 +229,38 @@ function send_sms_to_customer($notificationID, $referenceValue="")
         foreach($customerList as $customerID => $customerDetails)
         {
             $CustomerInfo = getAccountFullDetails($customerID);
-            
+      
             $messageBody = replace_mapping_info($notificationDetails['message'], $CustomerInfo);
             
             if($notificationDetails['trigger_type'] == 'sms' && $CustomerInfo['phone'] != '')
             {
                 if($referenceValue != "")
                     $messageBody = $referenceValue." ".$messageBody;
-                
+
                 $response = sendSMS($CustomerInfo['phone'], $messageBody);
             }
             elseif($notificationDetails['trigger_type'] == 'email' && $CustomerInfo['email1'] != '')
             {
                 if($referenceValue != "")
                     $messageBody = $referenceValue."<br/><br/>".$messageBody;
-                
+
                 $response = send_email($CustomerInfo['email1'], $notificationDetails['notificationname'], $messageBody);
             }           
             
             $response = json_encode($response);
             
-            $adb->pquery("INSERT INTO `notification_list` 
+            if($updateNotificationList > 0)
+            {
+                $adb->pquery("UPDATE `notification_list` SET `finished`=?,`finish_date_time`=?,`response`=? WHERE listid = ?",["Y", $currentDateTime, $response, $updateNotificationList]);
+            }
+            else
+            {
+                $adb->pquery("INSERT INTO `notification_list` 
                     (`notificationid`, `date_of_trigger`, `customer_name`, `customer_number`, `related_productnumber`, `related_product_id`,`finished`, `finish_date_time`, `response`) 
                     VALUES (?,?,?,?,?,?,?,?,?)", 
                     [$notificationDetails['notificationid'], $currentDateTime, $CustomerInfo['accountname'], $customerID, "", "", "Y", $currentDateTime, $response]
                     );
+            }
         }
     }
 }

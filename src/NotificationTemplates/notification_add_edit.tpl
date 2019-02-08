@@ -43,7 +43,7 @@
         <div class="col">
             <label class="control-label" for="searchinput"><b><u>Trigger When</u></b></label>
             <div class="">
-                <input type="text" placeholder="" class="form-control"  name="trigger_when_value" id="trigger_when_value" value="{$notification_detail['trigger_when_value']}" style="width:40px">&nbsp;&nbsp;
+                <input type="text" placeholder="" class="form-control"  name="trigger_when_value" id="trigger_when_value" value="{$notification_detail['trigger_when_value']}" style="width:80px">&nbsp;&nbsp;
                 <select name="trigger_when_option" id="trigger_when_option">
                     <option value="immediately" {if $notification_detail['trigger_when_option'] eq 'immediately'}selected{/if}>Immediately</option>
                     <option value="hours" {if $notification_detail['trigger_when_option'] eq 'hours'}selected{/if}>Hours Later</option>
@@ -64,7 +64,7 @@
                     <span id="jscal_strdate" class="fa-stack fa-md">
                     <i class="far fa-square fa-stack-2x"></i><i class="fas fa-calendar-alt fa-stack-1x"></i></i>
                     </span>
-                    ({$global_fuse5_date_format})
+                    (yyyy-mm-dd)
                     {literal}
                     <script type="text/javascript">
                         var jsformat = parent.global_fuse5_date_format_js;
@@ -105,7 +105,7 @@
                 <span id="jscal_enddate" class="fa-stack fa-md">
                 <i class="far fa-square fa-stack-2x"></i><i class="fas fa-calendar-alt fa-stack-1x"></i></i>
                 </span>
-                ({$global_fuse5_date_format})
+                (yyyy-mm-dd)
                 {literal}
                 <script type="text/javascript">
                     var jsformat = parent.global_fuse5_date_format_js;

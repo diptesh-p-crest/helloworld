@@ -4,7 +4,7 @@
         <tr>
             <th width="10%"><b>Selected Notification:</b></th>
             <th width="90%">
-                <div id="selected_product_buttonlist"></div>
+                <div id="selected_notification_buttonlist"></div>
             </th>
         </tr>
 </table>        
@@ -12,7 +12,7 @@
     <thead>        
         <tr class="lvtCol">
             <th width="10%" align="center" class="donotsort">                
-                <input type="checkbox" value="0" id="check_all" name="check_all" onclick="check_all_datatable_notification('selected_record_datatable_json','selected_product_buttonlist','check_all','notification_checkbox');">
+                <input type="checkbox" value="0" id="check_all_notification" name="check_all" onclick="check_all_datatable_notification('selected_record_datatable_json','selected_notification_buttonlist','check_all_notification','notification_checkbox');">
             </th>            
             <th width="30%">Notification Name</th>
 			<th width="20%">Trigger Type</th>    
@@ -24,19 +24,19 @@
     <tfoot>
         <tr>
             <td colspan="6">
-                <input type="button" value="Delete Product Group" class="btn btn-outline-danger btn-sm" onclick="delete_notification('');">
+                <input type="button" value="Delete Notifications" class="btn btn-outline-danger btn-sm" onclick="delete_notification('');">
                 <textarea name="selected_record_datatable_json" id="selected_record_datatable_json" style="display:none;"></textarea>
             </td>
         </tr>
     </tfoot>
 </table>
 
-<div id="notification_edit_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="notification_edit_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-left: 17px;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">                
-                <button type="button" class="close"  aria-hidden="true" onclick="close_notification_modal();">X</button>
                 <h4 class="modal-title" id="notification_edit_modal_title">Update Notification</h4>
+                <button type="button" class="close"  aria-hidden="true" onclick="close_notification_modal();">X</button>                
             </div>
             <div class="modal-body" id="notification_edit_data"></div>
         </div>

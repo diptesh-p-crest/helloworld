@@ -5,7 +5,6 @@
 <script type="text/javascript" src="jscalendar/lang/calendar-en.js"></script>
 <link rel="stylesheet" type="text/css" media="all" href="themes/softed/Notification.css">
 <link rel="stylesheet" type="text/css" media="all" href="jscalendar/calendar-win2k-cold-1.css">
-{include file="Buttons_List1.tpl"}
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="98%">
 	<tbody>
 		<tr>
@@ -17,17 +16,17 @@
                 <div class="panel-heading">
                     <ul class="nav nav-tabs" id="notification_tab">
                         <li id="li_notificationlist" class="active">
-                            <a href="#notification_data" data-toggle="tab" title="Notifications List" onclick="get_notification();">
+                            <a href="#li_notificationlist" data-toggle="tab" title="Notifications List" onclick="get_notification();">
                                 Notifications List 
                             </a>
                         </li>
                         <li id="li_notification">
-                            <a href="#notification_data" data-toggle="tab" title="Notifications Create" onclick="add_edit_notification('');">
+                            <a href="#li_notification" data-toggle="tab" title="Notifications Create" onclick="add_edit_notification('');">
                                 Create Notification
                             </a>
                         </li> 
                         <li id="li_notification_smsconfig">
-                            <a href="#notification_data" data-toggle="tab" title="SMS Config (Twilio)" onclick="SMSConfig();">
+                            <a href="#li_notification_smsconfig" data-toggle="tab" title="SMS Config (Twilio)" onclick="SMSConfig();">
                                 SMS Config (Twilio)
                             </a>
                         </li>
@@ -45,9 +44,15 @@
 	</tbody>
 </table>
 {literal}
-    <script language="javascript" type="text/javascript">    
-        //get_notification();
-        add_edit_notification('');
-        //SMSConfig();
+    <script language="javascript" type="text/javascript">
+        var type = window.location.hash.substr(1);
+        if(type == 'li_notificationlist')
+            get_notification();
+        else if(type == 'li_notification')
+            add_edit_notification('');
+        else if(type == 'li_notification_smsconfig')
+            SMSConfig();
+        else
+            get_notification();
     </script>
 {/literal}

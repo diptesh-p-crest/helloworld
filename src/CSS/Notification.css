@@ -68,7 +68,7 @@ a {
 }
 
 .panel-heading {
-    padding: 10px 0px;
+    padding: 10px 13px;
     border-bottom: 1px solid transparent;
     border-bottom-color: transparent;
     border-top-right-radius: 3px;
@@ -111,4 +111,9 @@ ul li {
 
 .row {
     margin-bottom: 22px;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #111;
 }

@@ -205,57 +205,28 @@ function notification_datatable()
     global $adb;
     
     $columns = array(
-        1 => 'LENGTH(notificationname),notificationname',
+        1 => 'notificationname',
         2 => 'trigger_type',
         3 => 'trigger_on',
+        4 => 'trigger_for',
     ); 
     
     $where_search = '';
-    if($_REQUEST['custom_searchtype'] == 'basicsearch')
+    if($_REQUEST['notificationname'] != '')
     {
-        $custom_basic_searchstring = $_REQUEST['custom_basic_searchstring'];
-        $custom_basicsearch_fieldname = $_REQUEST['custom_basicsearch_fieldname'];
-        $custom_basicsearch_option = $_REQUEST['custom_basicsearch_option'];
-        
-        
-        $where_search  .= ' AND ';
-        if($custom_basicsearch_option == 'beginwith')
-        {
-            $where_search .= " ".$custom_basicsearch_fieldname." like '".$custom_basic_searchstring."%' ";
-        }
-        else            
-        {            
-            $where_search .= " ".$custom_basicsearch_fieldname." = '".$custom_basic_searchstring."' ";    
-        }
-        
+        $where_search .= " AND notificationname LIKE '{$_REQUEST['notificationname']}%'";
     }
-    else if($_REQUEST['custom_searchtype'] == 'advancesearch')
+    if($_REQUEST['trigger_type'] != '')
     {
-        
-        $advancesearchdata = $_REQUEST['advancesearchdata'];
-        if(count($advancesearchdata) > 0)
-        {
-           
-           $custom_where_data =  custom_advancesearch_build_where($advancesearchdata);
-           if(count($custom_where_data) > 0) 
-           {
-               
-               if($_REQUEST['custom_advancesearch_option'] == 'match_all')
-               {
-                
-                $custom_where_data_str  = ' ( '.implode(" and ",$custom_where_data).' ) '; 
-               }
-               else
-               {
-                   $custom_where_data_str  = ' ( '.implode(" or ",$custom_where_data).' ) '; 
-               }
-               
-               $where_search  .= ' AND ';
-               
-               $where_search .= $custom_where_data_str;
-           }
-            
-        }
+        $where_search .= " AND trigger_type = '{$_REQUEST['trigger_type']}'";
+    }
+    if($_REQUEST['trigger_on'] != '')
+    {
+        $where_search .= " AND trigger_on = '{$_REQUEST['trigger_on']}'";
+    }
+    if($_REQUEST['trigger_for'] != '')
+    {
+        $where_search .= " AND trigger_for = '{$_REQUEST['trigger_for']}'";
     }
     
     $qry = "SELECT count(notificationid) as numofproducts
@@ -296,7 +267,7 @@ function notification_datatable()
                 $temp_array['DT_RowId'] = 'row_'.$notificationid;
                 
                 $temp_array[] = '<input type="checkbox" name="check_' . $notificationid . '" id="check_' . $notificationid . '" class="notification_checkbox" onclick="maintain_notification_checkbox_datatable
-(this,\'selected_record_datatable_json\',\'selected_product_buttonlist\',\'check_all\',\'notification_checkbox\')" value="' . $productgroupid . '"  data-notificationname="'.$row['notificationname'].'" data-selectedbuttoninfo="'.$row['notificationname'].'">';                
+(this,\'selected_record_datatable_json\',\'selected_notification_buttonlist\',\'check_all_notification\',\'notification_checkbox\')" value="' . $notificationid . '"  data-notificationname="'.$row['notificationname'].'" data-selectedbuttoninfo="'.$row['notificationname'].'">';                
                 
                 
                 $temp_array[] = '<a href="javascript:;" onclick="add_edit_notification(\''.$row['notificationid'].'\');">'.$row['notificationname'].'</a>';
@@ -427,18 +398,29 @@ function notification_displaycustomerlist()
     $customeridjson = trim($_REQUEST['customerjson']);       
     
     $columns = array(
-        1 => 'LENGTH(cf_658),cf_658',        
+        1 => 'cf_658',        
         2 => 'accountname'        
     );  
     
     $arrcustomerow = array();   
     $customeridarray = json_decode($customeridjson,true);    
     $customeridstr = implode(",",$customeridarray);
+        
+    $where_search = '';
+    if($_REQUEST['search_customer_name'] != '')
+    {
+        $where_search .= " AND acc.accountname LIKE '{$_REQUEST['search_customer_name']}%'";
+    }
+    if($_REQUEST['search_customer_number'] != '')
+    {
+        $where_search .= " AND cf_658 LIKE '{$_REQUEST['search_customer_number']}%'";
+    }
+    
     
     $qry = "SELECT count(acc.accountid) AS numofcustomer
             FROM vtiger_account AS acc
             INNER JOIN vtiger_accountscf AS acf ON acf.accountid = acc.accountid
-            WHERE acc.deleted = '0'";
+            WHERE acc.deleted = '0' $where_search ";
     
     $res = $adb->pquery($qry);
     $total_record = $adb->query_result($res, 0, 'numofcustomer');    
@@ -448,7 +430,7 @@ function notification_displaycustomerlist()
 		$qry = "SELECT acc.accountid, acc.accountname, cf_658 as accountnumber
                 FROM vtiger_account AS acc
                 INNER JOIN vtiger_accountscf AS acf ON acf.accountid = acc.accountid
-                WHERE acc.deleted = '0'";
+                WHERE acc.deleted = '0' $where_search ";
         
         $qry .= " ORDER BY " . $columns[$_REQUEST['order'][0]['column']] . "   " . $_REQUEST['order'][0]['dir'] . " ";
         $qry .= " LIMIT " . $_REQUEST['start'] . " ," . $_REQUEST['length'] . " ";
@@ -468,7 +450,7 @@ function notification_displaycustomerlist()
                 $temp_array['DT_RowId'] = 'row_'.$accountid;                
                 
                 $temp_array[] = '<input type="checkbox" name="check_' . $accountid . '" id="check_' . $accountid . '" class="notification_customer_list_checkbox" onclick="maintain_checkbox_datatable_notification
-(this,\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\')" value="' . $accountid . '"  data-accountnumber="'.$row['accountnumber'].'" data-selectedbuttoninfo="'.$row['accountnumber'].'">';
+(this,\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\')" value="' . $accountid . '"  data-accountnumber="'.$row['accountnumber'].'" data-accountname="'.$row['accountname'].'" data-selectedbuttoninfo="'.$row['accountnumber'].'">';
                 
                 $temp_array[] = '<a target="_blank" href="index.php?action=DetailView&module=Accounts&record=' . $row['accountid'] . '">' . $row['accountnumber'] . '</a>';
                 $temp_array[] = $row['accountname'];
@@ -497,7 +479,7 @@ function notification_displayproductlist()
     $productidjson = trim($_REQUEST['productidjson']);       
     
     $columns = array(
-        1 => 'LENGTH(cf_784),cf_784',        
+        1 => 'cf_784',        
         2 => 'productname'        
     );  
     
@@ -505,10 +487,20 @@ function notification_displayproductlist()
     $productidarray = json_decode($productidjson,true);    
     $productidstr = implode(",",$productidarray);
     
+    $where_search = '';
+    if($_REQUEST['search_product_name'] != '')
+    {
+        $where_search .= " AND p.productname LIKE '{$_REQUEST['search_product_name']}%'";
+    }
+    if($_REQUEST['search_product_number'] != '')
+    {
+        $where_search .= " AND cf_784 LIKE '{$_REQUEST['search_product_number']}%'";
+    }
+    
     $qry = "SELECT count(p.productid) AS numofproducts
             FROM vtiger_products AS p
             INNER JOIN vtiger_productcf AS pcf ON pcf.productid = p.productid
-            WHERE p.deleted = '0'";
+            WHERE p.deleted = '0' $where_search";
     
     $res = $adb->pquery($qry);
     $total_record = $adb->query_result($res, 0, 'numofproducts');    
@@ -518,7 +510,7 @@ function notification_displayproductlist()
 		$qry = "SELECT p.productid, p.productname, cf_784 as productnumber
                 FROM vtiger_products AS p
                 INNER JOIN vtiger_productcf AS pcf ON pcf.productid = p.productid 
-                WHERE p.deleted = '0'";
+                WHERE p.deleted = '0' $where_search";
         
         $qry .= " ORDER BY " . $columns[$_REQUEST['order'][0]['column']] . "   " . $_REQUEST['order'][0]['dir'] . " ";
         $qry .= " LIMIT " . $_REQUEST['start'] . " ," . $_REQUEST['length'] . " ";
@@ -538,7 +530,7 @@ function notification_displayproductlist()
                 $temp_array['DT_RowId'] = 'row_'.$productid;                
                 
                 $temp_array[] = '<input type="checkbox" name="check_' . $productid . '" id="check_' . $productid . '" class="notification_list_checkbox" onclick="maintain_checkbox_datatable_notification
-(this,\'selected_record_notification_product_datatable_json\',\'selected_notification_product_buttonlist\',\'product_check_all\',\'notification_list_checkbox\')" value="' . $productid . '"  data-productnumber="'.$row['productnumber'].'" data-selectedbuttoninfo="'.$row['productnumber'].'">';
+(this,\'selected_record_notification_product_datatable_json\',\'selected_notification_product_buttonlist\',\'product_check_all\',\'notification_list_checkbox\')" value="' . $productid . '"  data-productnumber="'.$row['productnumber'].'" data-productname="'.$row['productname'].'" data-selectedbuttoninfo="'.$row['productnumber'].'">';
                 
                 $temp_array[] = '<a target="_blank" href="index.php?action=DetailView&module=Products&record=' . $row['productid'] . '">' . $row['productnumber'] . '</a>';
                 $temp_array[] = $row['productname'];

@@ -4,6 +4,38 @@ jq(document).ready(function(){
 
 });
 
+function check_numeric(inputVal)
+{
+    var patt = /^\d+$/i;
+    return patt.test(inputVal);
+}
+
+function search_notification(optionVal)
+{
+    datatable_postdata = {};
+        
+    if(optionVal != 'showall')
+    {
+        var notificationname = jq.trim(jq('#srch_notificationname').val());
+        var trigger_type = jq.trim(jq('#srch_trigger_type').val());
+        var trigger_on = jq.trim(jq('#srch_trigger_on').val());
+        var trigger_for   = jq.trim(jq('#srch_trigger_for').val());
+        
+        if(notificationname == '' && trigger_type == '' && trigger_on == '' && trigger_for == '')
+        {
+            alert("Please enter search value");
+            return false;
+        }
+        
+        datatable_postdata.notificationname = notificationname;
+        datatable_postdata.trigger_type = trigger_type;
+        datatable_postdata.trigger_on = trigger_on;
+        datatable_postdata.trigger_for = trigger_for;        
+    }
+    
+    get_notification_datatable(datatable_postdata);    
+}
+
 function SMSConfig()
 {
     jq("#status").show();
@@ -79,6 +111,26 @@ function smsconfig_save()
     var smsconfigid = jq('#smsconfigid').val();
     var activeInactive = jq('#activeInactive').val();
 
+     
+    if(accountid == '')
+    {
+        alert('Please enter Account ID');
+        jq('#accountid').focus();
+        return false;
+    }
+    else if(key == '')
+    {
+        alert('Please enter Key');
+        jq('#key').focus();
+        return false;
+    }
+    else if(phonenumber == '' || !check_numeric(phonenumber) || phonenumber.length > 10 || phonenumber.length < 10)
+    {
+        alert('Please enter 10 digit numeric value for Phone Number');
+        jq('#phonenumber').focus();
+        return false;
+    }
+    
     if(activeInactive == "Y")
     {
         if(!confirm("It will make all other entries 'InActive' to make this entry 'Active'.\n Are you Sure?"))
@@ -86,26 +138,7 @@ function smsconfig_save()
             return false;
         }
     }
-    
-    if(accountid == '')
-    {
-        alert('Enter Account ID');
-        jq('#accountid').focus();
-        return false;
-    }
-    else if(key == '')
-    {
-        alert('Enter Key');
-        jq('#key').focus();
-        return false;
-    }
-    else if(phonenumber == '')
-    {
-        alert('Enter Phone Number');
-        jq('#phonenumber').focus();
-        return false;
-    }
-    
+      
     jq("#status").show();
     var postdata = 'maintask=smsconfig_save&accountid='+accountid+'&key='+key+'&phonenumber='+phonenumber+'&activeInactive='+activeInactive+'&smsconfigid='+smsconfigid;
 
@@ -161,15 +194,13 @@ function smsconfig_clear()
     jq('#activeInactive').val("Y");
 }
 
-function notification_customerlistshow()
+function notification_customerlistshow(postdata = {})
 {
     jq('#notification_datatable_productlist').hide();
     jq('#notification_datatable_customerlist').show();
     var customeridjson =  JSON.stringify(jq.trim(jq('#customeridjson').val()));
 
-	var postdata = {};
-
-    postdata.customeridjson = jq('#customeridjson').val();
+	postdata.customeridjson = jq('#customeridjson').val();
 
 	var currentpage = jq('#currentpage').val();
 
@@ -218,20 +249,21 @@ function notification_customerlistshow()
                     jq('#notification_customer_datatable_grid').DataTable().on('draw', function(){
                         make_checked_selected_checkbox_datatable_notification('selected_record_notification_customer_datatable_json','customer_check_all','notification_customer_list_checkbox');
                     });
+                                            
+                    var all_custom_attribute = JSON.parse(jq("#selected_record_notification_customer_datatable_json").val());
                     
-                    var id_list = new Array();
-                    id_list_arr_from_json = get_rows_selected_notification('selected_record_notification_customer_datatable_json');
-                    if(jq.isArray(id_list_arr_from_json) && id_list_arr_from_json.length > 0){
-                        id_list = id_list_arr_from_json;
-                    }
-                    
-                    jq('.notification_customer_list_checkbox').each(function()
+                    jq.each(all_custom_attribute, function (key,val) 
                     {
-                        if(jq.inArray(jq(this).val(), id_list) !== -1)
-                        { 
-                            jq(this).prop('checked', true);
-                            maintain_checkbox_datatable_notification(this,'selected_record_notification_customer_datatable_json','selected_notification_customer_buttonlist','product_check_all','notification_customer_list_checkbox');
+                        if(jq('#div_selected_checkbox_button_'+key).length == 0)
+                        {
+                            var checkbox_id = 'check_'+key;
+                            var button_html = ' <div class="btn-group buttongroupselected" id="div_selected_checkbox_button_'+key+'">';
+                            button_html += '<button type="button" class="btn btn-warning btn-sm">'+val.accountnumber+'</button>';
+                            button_html += '<button type="button" class="btn btn-danger" title="Delete Selected" onclick="remove_selected_checkbox_datatable_notification(\''+key+'\',\''+checkbox_id+'\',\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\');"><span class="glyphicon glyphicon-trash"></span></button></div> ';
+
+                            jq('#selected_notification_customer_buttonlist').append(button_html);
                         }
+                       
                     });
                     
                    jq("#notification_edit_modal").animate({ scrollTop: jq(window).height() }, 1000);
@@ -259,7 +291,7 @@ function notification_customerlistshow()
    });
 
 
-    jq('thead input[name="notification_check_all"]', jq('#notification_customer_datatable_grid').DataTable().table().container()).on('click', function(e){
+    jq('thead input[name="customer_check_all"]', jq('#notification_customer_datatable_grid').DataTable().table().container()).on('click', function(e){
       if(this.checked){
          jq('#notification_customer_datatable_grid tbody input[type="checkbox"]:not(:checked)').trigger('click').closest('tr').addClass('selected');
       } else {
@@ -273,16 +305,14 @@ function notification_customerlistshow()
 
 }
 
-function notification_productlistshow()
+function notification_productlistshow(postdata = {})
 {
     jq('#notification_datatable_customerlist').hide();
     jq('#notification_datatable_productlist').show(); 
     
     var productidjson =  JSON.stringify(jq.trim(jq('#productidjson').val()));
 
-	var postdata = {};
-
-    postdata.productidjson = jq('#productidjson').val();
+	postdata.productidjson = jq('#productidjson').val();
 
 	var currentpage = jq('#currentpage').val();
 
@@ -333,23 +363,21 @@ function notification_productlistshow()
                         make_checked_selected_checkbox_datatable_notification('selected_record_notification_product_datatable_json','product_check_all','notification_list_checkbox');
                     });
                     
-                    var id_list = new Array();
-                    id_list_arr_from_json = get_rows_selected_notification('selected_record_notification_product_datatable_json');
-                    if(jq.isArray(id_list_arr_from_json) && id_list_arr_from_json.length > 0){
-                        id_list = id_list_arr_from_json;
-                    }
+                    var all_custom_attribute = JSON.parse(jq("#selected_record_notification_product_datatable_json").val());
                     
-                    if(id_list.length > 0)
+                    jq.each(all_custom_attribute, function (key,val) 
                     {
-                        jq('.notification_list_checkbox').each(function()
+                        if(jq('#div_selected_checkbox_button_'+key).length == 0)
                         {
-                            if(jq.inArray(jq(this).val(), id_list) !== -1)
-                            { 
-                                jq(this).prop('checked', true);
-                                maintain_checkbox_datatable_notification(this,'selected_record_notification_product_datatable_json','selected_notification_product_buttonlist','product_check_all','notification_list_checkbox');
-                            }
-                        });
-                    }
+                            var checkbox_id = 'check_'+key;
+                            var button_html = ' <div class="btn-group buttongroupselected" id="div_selected_checkbox_button_'+key+'">';
+                            button_html += '<button type="button" class="btn btn-warning btn-sm">'+val.productname+'</button>';
+                            button_html += '<button type="button" class="btn btn-danger" title="Delete Selected" onclick="remove_selected_checkbox_datatable_notification(\''+key+'\',\''+checkbox_id+'\',\'selected_record_notification_product_datatable_json\',\'selected_notification_product_buttonlist\',\'product_check_all\',\'notification_list_checkbox\');"><span class="glyphicon glyphicon-trash"></span></button></div> ';
+
+                            jq('#selected_notification_product_buttonlist').append(button_html);
+                        }
+                       
+                    });
                     
                    jq("#notification_edit_modal").animate({ scrollTop: jq(window).height() }, 1000);
                 }
@@ -388,6 +416,50 @@ function notification_productlistshow()
 
     jq('#notification_datatable_productlist').show();
 
+}
+
+function search_notification_products(optionVal)
+{
+    datatable_postdata = {};
+        
+    if(optionVal != 'showall')
+    {
+        var pname = jq.trim(jq('#search_product_name').val());
+        var pnumber = jq.trim(jq('#search_product_number').val());
+        
+        if(pnumber == '' && pname == '')
+        {
+            alert("Please enter search parameters");
+            return false;
+        }
+        
+        datatable_postdata.search_product_name = pname;
+        datatable_postdata.search_product_number = pnumber;
+    }
+    
+    notification_productlistshow(datatable_postdata);   
+}
+
+function search_notification_customers(optionVal)
+{
+    datatable_postdata = {};
+        
+    if(optionVal != 'showall')
+    {
+        var cname = jq.trim(jq('#search_customer_name').val());
+        var cnumber = jq.trim(jq('#search_customer_number').val());
+        
+        if(cname == '' && cnumber == '')
+        {
+            alert("Please enter search parameters");
+            return false;
+        }
+        
+        datatable_postdata.search_customer_name = cname;
+        datatable_postdata.search_customer_number = cnumber;
+    }
+    
+    notification_customerlistshow(datatable_postdata);   
 }
 
 function make_checked_selected_checkbox_datatable_notification(textarea_json_id,main_checkbox_id,individual_checkbox_classname)
@@ -648,6 +720,10 @@ function close_notification_modal()
     jq('#li_notificationlist').addClass('active');
 }
 
+function htmlEntities_replace(str) 
+{
+    return String(str).replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(/\\/g, '');
+}
 
 function notification_save()
 {
@@ -666,37 +742,44 @@ function notification_save()
         
         if(notificationname == '')
         {
-            alert('Enter Notification Name');
+            alert('Please enter Notification Name');
             jq('#notificationname').focus();
             return false;
         }
         else if(trigger_type == '')
         {
-            alert('Select Trigger Type');
+            alert('Please Select Trigger Type');
             jq('#trigger_type').focus();
             return false;
         }
         else if(trigger_on == '')
         {
-            alert('Select Trigger On');
+            alert('Please Select Trigger On');
             jq('#trigger_on').focus();
-            return false;
-        }
-        else if(trigger_for  == '')
-        {
-            alert('Select Trigger For');
-            jq('#trigger_for').focus();
             return false;
         }
         else if(message  == '')
         {
-            alert('Enter Message');
+            alert('Please Enter a message in text area which will use while sending email and SMS');
             jq('#message').focus();
             return false;
         }
         
+        
+        if(trigger_type == 'sms')
+        {
+            var stripped_message = htmlEntities_replace(message.replace(/<[^>]+>/img, ""));
+            if(String(stripped_message).length > 120)
+            {
+                alert("Message limit for SMS type is 120 characters only");
+                jq('#message').focus();
+                return false;
+            }
+        }
+        
         if(trigger_when_value != '' || trigger_when_option != '')
         {
+            var patt = /^\d+$/i;
             if(trigger_when_option == 'immediately' && jq.trim(jq('#trigger_when_value').val()) != "" && jq.trim(jq('#trigger_when_value').val()) != "0")
             {
                 jq('#trigger_when_value').val('');
@@ -704,9 +787,9 @@ function notification_save()
                 jq('#trigger_when_value').focus();
                 return false;
             }
-            if(trigger_when_option != 'immediately' && (jq.trim(jq('#trigger_when_value').val()) == "" || jq.trim(jq('#trigger_when_value').val()) == "0"))
+            if(trigger_when_option != 'immediately' && (jq.trim(jq('#trigger_when_value').val()) == "" || jq.trim(jq('#trigger_when_value').val()) == "0" || !check_numeric(jq('#trigger_when_value').val())))
             {
-                alert("Please enter value for option other than 'Immediately'");
+                alert("Please enter Numeric value for option other than 'Immediately' in Trigger When field.");
                 jq('#trigger_when_value').focus();
                 return false;
             }
@@ -765,7 +848,7 @@ function notification_save()
         }
         
         jq("#status").show();
-        var postdata = 'maintask=notification_save&notificationname='+notificationname+'&trigger_type='+trigger_type+'&trigger_on='+trigger_on+'&trigger_for='+trigger_for+'&trigger_when_value='+trigger_when_value+'&trigger_when_option=' + trigger_when_option +'&message='+message+'&notificationid='+notificationid+'&optionVal='+optionVal+'&selected_products='+selected_products+'&selected_customers='+selected_customers+'&strdate='+strdate+'&enddate='+enddate;
+        var postdata = 'maintask=notification_save&notificationname='+encodeURIComponent(notificationname)+'&trigger_type='+trigger_type+'&trigger_on='+trigger_on+'&trigger_for='+trigger_for+'&trigger_when_value='+trigger_when_value+'&trigger_when_option=' + trigger_when_option +'&message='+encodeURIComponent(message)+'&notificationid='+notificationid+'&optionVal='+optionVal+'&selected_products='+selected_products+'&selected_customers='+selected_customers+'&strdate='+strdate+'&enddate='+enddate;
 
         jq.ajax({
             type: "POST",
@@ -904,10 +987,8 @@ function notification_customsearch_filter_data_object()
     return datatable_postdata;
 }
 
-function get_notification_datatable()
+function get_notification_datatable(datatable_postdata = {})
 {
-    var datatable_postdata = {}
-    datatable_postdata =  notification_customsearch_filter_data_object();
     if (jq.fn.dataTable.isDataTable('#notification_list_datatable_grid'))
     {
         jq('#notification_list_datatable_grid').DataTable().destroy();
@@ -919,14 +1000,14 @@ function get_notification_datatable()
                 "bStateSave": true,
                 "searching": false,
                 "pagingType": "full_numbers",
-                "order": [[1, 'asc'],[2,'asc']],
+                "order": [[1, 'asc']],
                 "iDisplayLength":15,
                 "lengthMenu": [[5,15,25,50,100], [5,15,25,50,100]],
                 "language": {
                     "emptyTable": "No Notification Found!",
                 },
                 "columnDefs": [
-                    {"orderable": false, "targets": [0,4]}
+                    {"orderable": false, "targets": [0,5]}
                 ],
                 "ajax": {
                     url: "index.php?module=Settings&action=SettingsAjax&file=notification_ajax_action&ajax=true&maintask=notification_datatable",
@@ -975,7 +1056,6 @@ function maintain_notification_checkbox_datatable(obj,textarea_json_id,div_id_se
         var all_custom_attribute = jq(obj).data();
 
         jq.each(all_custom_attribute, function (key,val) {
-
             if(key == 'selectedbuttoninfo')
             {
                 if(jq('#div_selected_checkbox_button_'+selected_id).length == 0)
@@ -1099,7 +1179,7 @@ function delete_notification(notificationid)
     if (notificationid_list.length > 0 || notificationid != '')
     {
 
-        result = confirm('Are you sure to delete product notification?');
+        result = confirm('Are you sure want to delete this notification?');
         if(result)
         {
             if (jq.inArray(notificationid, notificationid_list) === -1) 

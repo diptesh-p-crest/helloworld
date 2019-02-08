@@ -35,6 +35,11 @@ Manual Steps:
     {include file='NotificationTemplates/generalNotification.tpl'}
 {/if}
 
+Enter following line in "Smarty\templates\HeaderSubMenu.tpl" in Calender condition
+<li>
+    <a href="index.php?module=Settings&action=notification_manage&parenttab=Settings">Notification</a>
+</li>
+
 2) Using <b>PHINX</b> create new SQL file and copy down migrate <b>UP</b> and <b>Down</b> functions from \vendor\spectersolutions\notificationpack\src\DBChanges\notification_sql.php SQL to newly created SQL file. Finally Migrate the SQL.
 
 3) Need to remove "Iframe" value from "jscalendar\calendar.js" file on line 1487.
