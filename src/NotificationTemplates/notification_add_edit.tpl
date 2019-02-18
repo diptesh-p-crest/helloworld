@@ -10,7 +10,7 @@
         <div class="col">
             <label class="control-label" for="searchinput"><b><u>Trigger Type</u></b></label>
             <div class="">
-                <select name="trigger_type" id="trigger_type">
+                <select name="trigger_type" id="trigger_type" onchange="showHideFCKEditor(this.value)">
                     <option value=""></option>
                     <option value="sms" {if $notification_detail['trigger_type'] eq 'sms'}selected{/if}>SMS</option>
                     <option value="email" {if $notification_detail['trigger_type'] eq 'email'}selected{/if}>E-Mail</option>
@@ -59,12 +59,12 @@
         <div class="col">           
             <label class="control-label" for="searchinput"><b><u>Start Date</u></b></label>
             <div class="">
-                <input type="text" name="strdate" id="strdate" class="small" readonly="readonly" value="{$notification_detail['start_date']}"/>
+                <input type="text" name="strdate" id="strdate" class="small" readonly="readonly" value="{$formatted_start_date}"/>
                 <input type='hidden' id='hdnstrdate' name='hdnstrdate' value="{$notification_detail['start_date']}">
                     <span id="jscal_strdate" class="fa-stack fa-md">
                     <i class="far fa-square fa-stack-2x"></i><i class="fas fa-calendar-alt fa-stack-1x"></i></i>
                     </span>
-                    (yyyy-mm-dd)
+                    ({$global_fuse5_date_format})
                     {literal}
                     <script type="text/javascript">
                         var jsformat = parent.global_fuse5_date_format_js;
@@ -78,7 +78,7 @@
                         
                         Calendar.setup({
                             inputField: "strdate",   // id of the input field
-                            ifFormat: "%Y-%m-%d",       // format of the input field
+                            ifFormat: jsformat,       // format of the input field
                             showsTime: false,
                             timeFormat: "24",
                             button: "jscal_strdate",
@@ -100,12 +100,12 @@
         <div class="col">            
             <label class="control-label" for="searchinput"><b><u>End Date</u></b></label>
             <div class="">
-                <input type="text" name="enddate" id="enddate" class="small" readonly="readonly" value="{$notification_detail['end_date']}"/>
+                <input type="text" name="enddate" id="enddate" class="small" readonly="readonly" value="{$formatted_end_date}"/>
                 <input type='hidden' id='hdnenddate' name='hdnenddate' value="{$notification_detail['end_date']}">
                 <span id="jscal_enddate" class="fa-stack fa-md">
                 <i class="far fa-square fa-stack-2x"></i><i class="fas fa-calendar-alt fa-stack-1x"></i></i>
                 </span>
-                (yyyy-mm-dd)
+                ({$global_fuse5_date_format})
                 {literal}
                 <script type="text/javascript">
                     var jsformat = parent.global_fuse5_date_format_js;
@@ -119,7 +119,7 @@
 
                     Calendar.setup({
                         inputField: "enddate",   // id of the input field
-                        ifFormat: "%Y-%m-%d",       // format of the input field
+                        ifFormat: jsformat,       // format of the input field
                         showsTime: false,
                         timeFormat: "24",
                         button: "jscal_enddate",
@@ -163,8 +163,13 @@
                 </select>
                 <input type="text" id="customerMapSpan" name="customerMapSpan" />
             </div>
-            
-            <textarea name="message" id='message'style="width:90%;height:200px" class=small tabindex="5">{$notification_detail['message']}</textarea>
+            <div id="spn_emailMessage" style="display:none">
+                <textarea name="email_message" id='email_message'style="width:90%;height:200px" class=small tabindex="5">{$notification_detail['message']}</textarea>
+            </div>
+            <div id="spn_smsMessage" style="display:block">
+                <textarea name="sms_message" id='sms_message'style="width:90%;height:200px" class=small tabindex="5" maxlength='120' onkeyup="checkcounter();">{$notification_detail['message']}</textarea>
+                <br/><span id="spn_charCounter"></span>
+            </div>
         </div>
     </div>
     <div class="row"> 
@@ -202,7 +207,7 @@
 
 var oFCKeditor = null;
 
-oFCKeditor = new FCKeditor( "message" ) ;
+oFCKeditor = new FCKeditor( "email_message" ) ;
 
 oFCKeditor.BasePath   = "include/fckeditor/" ;
 oFCKeditor.ReplaceTextarea() ;

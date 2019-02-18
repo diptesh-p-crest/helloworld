@@ -3,7 +3,7 @@
         Search
     </div>
     <br/>
-    <div class="form-horizontal">
+    <div class="form-horizontal" id="NotificationSrchFrm">
         <div class="row">
             <div class="col">
                 <label class="control-label" for="searchinput"><b><u>Notification Name</u></b></label>
@@ -48,9 +48,9 @@
         <div class="row"> 
             <div class="col">
                 <input type="button" value="Search" class="btn btn-outline-warning btn-sm"  onclick="return search_notification('');" title="Search">
+                <input type="button" value="Reset" class="btn btn-outline-warning btn-sm"  onclick="return clear_form_elements('NotificationSrchFrm');" title="Reset">
                 <input type="button" value="Show All" class="btn btn-outline-warning btn-sm"  onclick="return search_notification('showall');" title="Show All">
             </div>
         </div>
-    </div>
     </div>
 </div>

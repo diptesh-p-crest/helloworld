@@ -11,7 +11,7 @@
             </th>
         </tr>
         <tr class="lvtCol">
-            <th width="2%" align="center" class="donotsort">
+            <th style="width:22px;" class="donotsort">
                 <input type="checkbox" value="0" id="product_check_all" name="product_check_all" onclick="check_all_datatable_notification('selected_record_notification_product_datatable_json','selected_notification_product_buttonlist','product_check_all','notification_list_checkbox');">
             </th>            
             <th>Product #</th>

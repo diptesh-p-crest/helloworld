@@ -1,7 +1,7 @@
 //Add jq code in this file
 
 jq(document).ready(function(){        
-
+    
 });
 
 function check_numeric(inputVal)
@@ -202,7 +202,7 @@ function notification_customerlistshow(postdata = {})
 
 	postdata.customeridjson = jq('#customeridjson').val();
 
-	var currentpage = jq('#currentpage').val();
+	var currentpage = parseInt(jq('#currentpage').val());
 
     if (jq.fn.dataTable.isDataTable('#notification_customer_datatable_grid'))
     {
@@ -249,24 +249,27 @@ function notification_customerlistshow(postdata = {})
                     jq('#notification_customer_datatable_grid').DataTable().on('draw', function(){
                         make_checked_selected_checkbox_datatable_notification('selected_record_notification_customer_datatable_json','customer_check_all','notification_customer_list_checkbox');
                     });
-                                            
-                    var all_custom_attribute = JSON.parse(jq("#selected_record_notification_customer_datatable_json").val());
                     
-                    jq.each(all_custom_attribute, function (key,val) 
+                    if(jq("#selected_record_notification_customer_datatable_json").val().length > 0)
                     {
-                        if(jq('#div_selected_checkbox_button_'+key).length == 0)
+                        var all_custom_attribute = JSON.parse(jq("#selected_record_notification_customer_datatable_json").val());
+                        
+                        jq.each(all_custom_attribute, function (key,val) 
                         {
-                            var checkbox_id = 'check_'+key;
-                            var button_html = ' <div class="btn-group buttongroupselected" id="div_selected_checkbox_button_'+key+'">';
-                            button_html += '<button type="button" class="btn btn-warning btn-sm">'+val.accountnumber+'</button>';
-                            button_html += '<button type="button" class="btn btn-danger" title="Delete Selected" onclick="remove_selected_checkbox_datatable_notification(\''+key+'\',\''+checkbox_id+'\',\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\');"><span class="glyphicon glyphicon-trash"></span></button></div> ';
+                            if(jq('#div_selected_checkbox_button_'+key).length == 0)
+                            {
+                                var checkbox_id = 'check_'+key;
+                                var button_html = ' <div class="btn-group buttongroupselected" id="div_selected_checkbox_button_'+key+'">';
+                                button_html += '<button type="button" class="btn btn-warning btn-sm">'+val.accountnumber+'</button>';
+                                button_html += '<button type="button" class="btn btn-danger" title="Delete Selected" onclick="remove_selected_checkbox_datatable_notification(\''+key+'\',\''+checkbox_id+'\',\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\');"><span class="glyphicon glyphicon-trash"></span></button></div> ';
 
-                            jq('#selected_notification_customer_buttonlist').append(button_html);
-                        }
-                       
-                    });
+                                jq('#selected_notification_customer_buttonlist').append(button_html);
+                            }
+                           
+                        });
+                    }  
                     
-                   jq("#notification_edit_modal").animate({ scrollTop: jq(window).height() }, 1000);
+                    jq("#notification_edit_modal").animate({ scrollTop: jq(window).height() }, 1000);
                 }
     } );
 
@@ -314,7 +317,7 @@ function notification_productlistshow(postdata = {})
 
 	postdata.productidjson = jq('#productidjson').val();
 
-	var currentpage = jq('#currentpage').val();
+	var currentpage = parseInt(jq('#currentpage').val());
 
     if (jq.fn.dataTable.isDataTable('#notification_product_datatable_grid'))
     {
@@ -363,23 +366,26 @@ function notification_productlistshow(postdata = {})
                         make_checked_selected_checkbox_datatable_notification('selected_record_notification_product_datatable_json','product_check_all','notification_list_checkbox');
                     });
                     
-                    var all_custom_attribute = JSON.parse(jq("#selected_record_notification_product_datatable_json").val());
-                    
-                    jq.each(all_custom_attribute, function (key,val) 
+                    if(jq("#selected_record_notification_product_datatable_json").val().length > 0)
                     {
-                        if(jq('#div_selected_checkbox_button_'+key).length == 0)
+                        var all_custom_attribute = JSON.parse(jq("#selected_record_notification_product_datatable_json").val());
+                        
+                        jq.each(all_custom_attribute, function (key,val) 
                         {
-                            var checkbox_id = 'check_'+key;
-                            var button_html = ' <div class="btn-group buttongroupselected" id="div_selected_checkbox_button_'+key+'">';
-                            button_html += '<button type="button" class="btn btn-warning btn-sm">'+val.productname+'</button>';
-                            button_html += '<button type="button" class="btn btn-danger" title="Delete Selected" onclick="remove_selected_checkbox_datatable_notification(\''+key+'\',\''+checkbox_id+'\',\'selected_record_notification_product_datatable_json\',\'selected_notification_product_buttonlist\',\'product_check_all\',\'notification_list_checkbox\');"><span class="glyphicon glyphicon-trash"></span></button></div> ';
+                            if(jq('#div_selected_checkbox_button_'+key).length == 0)
+                            {
+                                var checkbox_id = 'check_'+key;
+                                var button_html = ' <div class="btn-group buttongroupselected" id="div_selected_checkbox_button_'+key+'">';
+                                button_html += '<button type="button" class="btn btn-warning btn-sm">'+val.productname+'</button>';
+                                button_html += '<button type="button" class="btn btn-danger" title="Delete Selected" onclick="remove_selected_checkbox_datatable_notification(\''+key+'\',\''+checkbox_id+'\',\'selected_record_notification_product_datatable_json\',\'selected_notification_product_buttonlist\',\'product_check_all\',\'notification_list_checkbox\');"><span class="glyphicon glyphicon-trash"></span></button></div> ';
 
-                            jq('#selected_notification_product_buttonlist').append(button_html);
-                        }
-                       
-                    });
+                                jq('#selected_notification_product_buttonlist').append(button_html);
+                            }
+                           
+                        });
+                    }
                     
-                   jq("#notification_edit_modal").animate({ scrollTop: jq(window).height() }, 1000);
+                    jq("#notification_edit_modal").animate({ scrollTop: jq(window).height() }, 1000);
                 }
     } );
 
@@ -735,7 +741,12 @@ function notification_save()
         var trigger_for   = jq.trim(jq('#trigger_for').val());
         var trigger_when_value = jq('#trigger_when_value').val();
         var trigger_when_option = jq('#trigger_when_option').val();
-        var message = FCKeditorAPI.GetInstance('message').GetXHTML();
+        
+        if(trigger_type != 'email')
+            var message = jq('#sms_message').val();
+        else
+            var message = FCKeditorAPI.GetInstance('email_message').GetXHTML();
+        
         var notificationid = jq('#notificationid').val();
         var strdate = jq('#hdnstrdate').val();
         var enddate = jq('#hdnenddate').val();
@@ -772,7 +783,7 @@ function notification_save()
             if(String(stripped_message).length > 120)
             {
                 alert("Message limit for SMS type is 120 characters only");
-                jq('#message').focus();
+                jq('#sms_message').focus();
                 return false;
             }
         }
@@ -889,8 +900,10 @@ function add_edit_notification(notificationid)
 
                 jq('#notification_edit_modal').on('shown.bs.modal', function() {
                     jq(this).find('.modal-dialog').css({width:'auto',height:'auto'});
+                    jq(this).css({'padding-left':'17px'});
                     jq('#notificationname').focus();
                 });
+                showHideFCKEditor(jq("#trigger_type").val());
             }
             else
             {
@@ -901,7 +914,8 @@ function add_edit_notification(notificationid)
             jq("#status").hide();
 
         }
-    });
+    });    
+    
 }
 
 function get_notification()
@@ -1018,6 +1032,15 @@ function get_notification_datatable(datatable_postdata = {})
 						jq("#orderby").val(newData.orderBycond);
 						jq("#where_export").val(newData.where_export);
 						jq("#all_ids").val(newData.all_ids);
+                        if(newData.all_ids == null)
+                        {
+                           jq("#check_all_notification").attr('disabled', true); 
+                           jq("#check_all_notification").attr('checked', false);
+                        }
+                        else
+                        {
+                            jq("#check_all_notification").attr('disabled', false); 
+                        }
 						return  data;
 					},
                     error: function() {
@@ -1030,7 +1053,7 @@ function get_notification_datatable(datatable_postdata = {})
                     var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
                     pagination.toggle(this.api().page.info().pages > 1);
                    jq('#notification_list_datatable_grid').DataTable().on('draw', function(){
-                        make_checked_selected_checkbox_datatable_notification('selected_record_datatable_json','check_all','notification_checkbox');
+                        make_checked_selected_checkbox_datatable_notification('selected_record_datatable_json','check_all_notification','notification_checkbox');
                     });
                 }
             });
@@ -1293,4 +1316,57 @@ function updateMapSpan(obj, textID)
     {
         jq("#"+textID).val("");
     }
+}
+
+function showHideFCKEditor(optionVal)
+{
+    if(optionVal != 'email')
+    {
+        jq("#spn_smsMessage").show();
+        jq("#spn_emailMessage").hide();
+    }
+    else
+    { 
+        jq("#spn_smsMessage").hide();
+        jq("#spn_emailMessage").show();
+    }
+}
+
+function checkcounter() 
+{
+    max = jq('#sms_message').attr("maxlength");
+    var len = jq('#sms_message').val().length;
+    if (len >= max)
+    {
+        jq('#spn_charCounter').text('you have reached the limit');
+    } 
+    else 
+    {
+        var char = max - len;
+        jq('#spn_charCounter').text(char + ' characters left');
+    }
+}
+
+function clear_form_elements(idVal) 
+{
+  jq("#"+idVal).find(':input').each(function() {
+    switch(this.type) {
+        case 'password':
+        case 'text':
+        case 'textarea':
+        case 'file':
+        case 'select-one':
+        case 'select-multiple':
+        case 'date':
+        case 'number':
+        case 'tel':
+        case 'email':
+            jq(this).val('');
+            break;
+        case 'checkbox':
+        case 'radio':
+            this.checked = false;
+            break;
+    }
+  });
 }

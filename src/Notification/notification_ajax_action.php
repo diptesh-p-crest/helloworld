@@ -142,7 +142,7 @@ function sms_config_datatable()
                 
                 $temp_array[] = $row['key'];
                 
-                $temp_array[] = $row['phonenumber'];
+                $temp_array[] = "(".substr($row['phonenumber'],0,3).") ".substr($row['phonenumber'],3,3)."-".substr($row['phonenumber'],6,4);
                 
                 $temp_array[] = $row['active'] == "Y" ? "Active" : "Inactive";
                 
@@ -449,8 +449,7 @@ function notification_displaycustomerlist()
                 $accountid = $row['accountid'];
                 $temp_array['DT_RowId'] = 'row_'.$accountid;                
                 
-                $temp_array[] = '<input type="checkbox" name="check_' . $accountid . '" id="check_' . $accountid . '" class="notification_customer_list_checkbox" onclick="maintain_checkbox_datatable_notification
-(this,\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\')" value="' . $accountid . '"  data-accountnumber="'.$row['accountnumber'].'" data-accountname="'.$row['accountname'].'" data-selectedbuttoninfo="'.$row['accountnumber'].'">';
+                $temp_array[] = '<input type="checkbox" name="check_' . $accountid . '" id="check_' . $accountid . '" class="notification_customer_list_checkbox" onclick="maintain_checkbox_datatable_notification(this,\'selected_record_notification_customer_datatable_json\',\'selected_notification_customer_buttonlist\',\'customer_check_all\',\'notification_customer_list_checkbox\')" value="' . $accountid . '"  data-accountnumber="'.$row['accountnumber'].'" data-accountname="'.$row['accountname'].'" data-selectedbuttoninfo="'.$row['accountnumber'].'">';
                 
                 $temp_array[] = '<a target="_blank" href="index.php?action=DetailView&module=Accounts&record=' . $row['accountid'] . '">' . $row['accountnumber'] . '</a>';
                 $temp_array[] = $row['accountname'];

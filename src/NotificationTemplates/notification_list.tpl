@@ -11,7 +11,7 @@
 <table id="notification_list_datatable_grid" cellpadding="5" cellspacing="1" class="table table-bordered">
     <thead>        
         <tr class="lvtCol">
-            <th width="10%" align="center" class="donotsort">                
+            <th style="width:22px;" class="donotsort">                
                 <input type="checkbox" value="0" id="check_all_notification" name="check_all" onclick="check_all_datatable_notification('selected_record_datatable_json','selected_notification_buttonlist','check_all_notification','notification_checkbox');">
             </th>            
             <th width="30%">Notification Name</th>
@@ -31,7 +31,7 @@
     </tfoot>
 </table>
 
-<div id="notification_edit_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="padding-left: 17px;">
+<div id="notification_edit_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">                
