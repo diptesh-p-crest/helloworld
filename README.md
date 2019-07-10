@@ -14,7 +14,7 @@
   "repositories": [
     {
        "type": "vcs",
-       "url": "https://github.com/diptesh-p-crest/helloworld.git" 
+       "url": "https://github.com/diptesh-patel/helloworld.git" 
     }
   ]
 }
